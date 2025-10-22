@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "nDRhG61Rinc=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Metin\\Desktop\\Yazılım dosyaları\\Projeler\\SyntaxSherlock\\src\\Gateway\\Gateway.Api\\Gateway.Api.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Metin\\.nuget\\packages\\system.io.hashing\\8.0.0\\system.io.hashing.8.0.0.nupkg.sha512",
+    "C:\\Users\\Metin\\.nuget\\packages\\yarp.reverseproxy\\2.3.0\\yarp.reverseproxy.2.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}
