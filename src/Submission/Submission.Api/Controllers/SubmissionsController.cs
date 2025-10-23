@@ -26,9 +26,7 @@ public class SubmissionsController : ControllerBase
         _logger = logger;
     }
 
-    /// <summary>
-    /// 📤 Kod dosyasını yükler ve otomatik olarak analize gönderir.
-    /// </summary>
+    // Kod dosyasını yükler ve otomatik olarak analize gönderir.
     [HttpPost("upload")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Upload(
@@ -50,12 +48,12 @@ public class SubmissionsController : ControllerBase
         await using (var fs = System.IO.File.Create(filePath))
             await file.CopyToAsync(fs, ct);
 
-        // 🔹 Dil otomatik tespiti (uzantıdan)
+        // Dil otomatik tespiti (uzantıdan)
         language ??= DetectLanguageFromExtension(file.FileName);
 
         _logger.LogInformation("📁 File uploaded: {Path} (Lang={Lang})", filePath, language);
 
-        // 🔹 Event oluştur ve kuyruğa gönder
+        // Event oluştur ve kuyruğa gönder
         var evt = new CodeSubmittedEvent(
             SubmissionId: submissionId,
             FilePath: filePath,
@@ -75,7 +73,7 @@ public class SubmissionsController : ControllerBase
         });
     }
 
-    // 🔸 Uzantıya göre dil belirleme (ileride ML ile geliştirilebilir)
+    // Uzantıya göre dil belirleme (ileride ML ile geliştirilebilir)
     private static string DetectLanguageFromExtension(string fileName)
     {
         var ext = Path.GetExtension(fileName).ToLowerInvariant();

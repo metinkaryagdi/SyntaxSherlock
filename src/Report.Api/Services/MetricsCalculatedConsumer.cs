@@ -76,7 +76,7 @@ public class MetricsCalculatedConsumer : BackgroundService
                             InfoCount = root.TryGetProperty("infoCount", out var info) ? info.GetInt32() : 0,
                             IssueCount = root.GetProperty("issueCount").GetInt32(),
                             FileCount = root.GetProperty("fileCount").GetInt32(),
-                            CodeQualityScore = root.TryGetProperty("codeQualityScore", out var score) ? score.GetInt32() : 0, // ✅ yeni alan
+                            CodeQualityScore = root.TryGetProperty("codeQualityScore", out var score) ? score.GetInt32() : 0, 
                             CalculatedAt = root.GetProperty("calculatedAt").GetDateTimeOffset()
                         };
 
@@ -97,7 +97,6 @@ public class MetricsCalculatedConsumer : BackgroundService
                             }
                         }
 
-                        // 🔹 DB işlemi
                         using var scope = _scopeFactory.CreateScope();
                         var repo = scope.ServiceProvider.GetRequiredService<IReportRepository>();
 

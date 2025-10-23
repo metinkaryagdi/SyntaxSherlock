@@ -10,7 +10,7 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Met
     {
         var optionsBuilder = new DbContextOptionsBuilder<MetricsDbContext>();
 
-        // 🔹 Lokal ortam için doğru connection string
+        // Lokal ortam için doğru connection string
         optionsBuilder.UseNpgsql(
             "Host=localhost;Port=5432;Database=syntaxsherlock;Username=ssuser;Password=sspass");
 

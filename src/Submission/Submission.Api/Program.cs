@@ -23,17 +23,17 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 🔹 Swagger (her zaman açık, local test için)
+// Swagger (her zaman açık, local test için)
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Submission API v1");
 });
 
-// 🔹 Routing ve controller mapping
+// Routing ve controller mapping
 app.UseRouting();
 app.MapControllers();
 
-// 🔹 Container içinde 8080 portunu dinle
+// Container içinde 8080 portunu dinle
 Console.WriteLine("✅ Submission.API started and waiting for uploads...");
 app.Run("http://0.0.0.0:8080");

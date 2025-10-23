@@ -20,12 +20,10 @@ public class LintingIssue
     public int Line { get; set; }
     public int Column { get; set; }
 
-    // ✅ Yeni alan: Severity (error, warning, info vs.)
     [Required, MaxLength(20)]
     public string Severity { get; set; } = "warning";
 
-    // 🔹 Foreign Key ve Navigation
     [ForeignKey(nameof(Metric))]
-    public Guid MetricId { get; set; }      // EF migration’da foreign key oluşturur
+    public Guid MetricId { get; set; }      
     public ReportMetric Metric { get; set; } = default!;
 }

@@ -9,7 +9,7 @@ public class LintingMetric
     public int IssueCount { get; set; }
     public int FileCount { get; set; }
     public DateTimeOffset CalculatedAt { get; set; }
-    public int CodeQualityScore { get; set; }  // ✅ artık serbestçe değiştirilebilir
+    public int CodeQualityScore { get; set; }  
 
     public LintingMetric() { }
 

@@ -15,11 +15,11 @@ public class ReportMetric
 
     public int ErrorCount { get; set; }
     public int WarningCount { get; set; }
-    public int InfoCount { get; set; } // ✅ eklendi
+    public int InfoCount { get; set; } 
     public int IssueCount { get; set; }
     public int FileCount { get; set; }
 
-    public int CodeQualityScore { get; set; } // ✅ eklendi
+    public int CodeQualityScore { get; set; } 
 
     public DateTimeOffset CalculatedAt { get; set; }
 

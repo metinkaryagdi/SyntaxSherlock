@@ -19,7 +19,7 @@ namespace Report.Api.Data
             {
                 e.HasKey(x => x.Id);
                 e.Property(x => x.SubmissionId).HasMaxLength(64).IsRequired();
-                e.HasIndex(x => x.SubmissionId).IsUnique(); // principal key olacak
+                e.HasIndex(x => x.SubmissionId).IsUnique(); 
             });
 
             modelBuilder.Entity<LintingIssue>(e =>
@@ -27,7 +27,6 @@ namespace Report.Api.Data
                 e.HasKey(x => x.Id);
                 e.Property(x => x.SubmissionId).HasMaxLength(64).IsRequired();
 
-                // 🔥 asıl kritik satır
                 e.HasOne(i => i.Metric)
                     .WithMany()
                     .HasForeignKey(i => i.SubmissionId)

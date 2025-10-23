@@ -5,25 +5,25 @@ using Report.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 🔹 PostgreSQL bağlantısı
+// PostgreSQL bağlantısı
 builder.Services.AddDbContext<ReportDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 🔹 RabbitMQ ayarları
+// RabbitMQ ayarları
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMq"));
 
-// 🔹 Repository & Consumer servisleri
+// Repository & Consumer servisleri
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddHostedService<MetricsCalculatedConsumer>();
 
-// 🔹 API Controller & Swagger
+// API Controller & Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 🔹 Otomatik migration (veritabanı yoksa oluştur)
+// Otomatik migration (veritabanı yoksa oluştur)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ReportDbContext>();

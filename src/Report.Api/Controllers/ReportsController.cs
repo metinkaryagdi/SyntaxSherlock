@@ -14,9 +14,7 @@ public class ReportsController : ControllerBase
         _repo = repo;
     }
 
-    /// <summary>
-    /// 🔹 Tüm submission metriklerinin özet listesini döner.
-    /// </summary>
+    // Tüm submission metriklerinin özet listesini döner.
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -38,9 +36,7 @@ public class ReportsController : ControllerBase
         return Ok(summaries);
     }
 
-    /// <summary>
-    /// 🔹 Belirli bir submission'a ait detaylı metrik + linting hatalarını döner.
-    /// </summary>
+    // Belirli bir submission'a ait detaylı metrik + linting hatalarını döner.
     [HttpGet("{submissionId}")]
     public async Task<IActionResult> GetBySubmission(string submissionId)
     {
@@ -78,7 +74,7 @@ public class ReportsController : ControllerBase
         return Ok(response);
     }
 
-    // 🔸 Skora göre harf notu (grade)
+    // Skora göre harf notu (grade)
     private static string GetGrade(int score) =>
         score switch
         {
@@ -91,7 +87,7 @@ public class ReportsController : ControllerBase
             _ => "F"
         };
 
-    // 🔸 Skora göre yorum
+    // Skora göre yorum
     private static string GetEvaluation(int score) =>
         score switch
         {

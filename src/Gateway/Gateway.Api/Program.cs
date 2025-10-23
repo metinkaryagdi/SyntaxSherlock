@@ -2,11 +2,11 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Reverse proxy yapılandırmasını yükle
+// Reverse proxy yapılandırmasını yükle
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
-// ✅ CORS (frontend erişimi için)
+// CORS (frontend erişimi için)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -19,13 +19,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ✅ CORS aktif
+// CORS aktif
 app.UseCors("AllowAll");
 
-// ✅ Proxy rotalarını YARP'tan yükle
+// Proxy rotalarını YARP'tan yükle
 app.MapReverseProxy();
 
-// ✅ Basit health endpoint
+// Basit health endpoint
 app.MapGet("/", () => Results.Ok(new
 {
     message = "🧩 SyntaxSherlock API Gateway is running",
@@ -33,5 +33,5 @@ app.MapGet("/", () => Results.Ok(new
     time = DateTime.UtcNow
 }));
 
-// ✅ Dışarıdan erişim için 0.0.0.0:5000'de dinle
+// Dışarıdan erişim için 0.0.0.0:5000'de dinle
 app.Run("http://0.0.0.0:5000");

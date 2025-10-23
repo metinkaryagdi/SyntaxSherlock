@@ -104,21 +104,17 @@ public sealed class MetricsConsumer : BackgroundService
                     return;
                 }
 
-                // 1️⃣ Linter event'ini metriklere dönüştür
                 var metric = ComputeMetrics(json);
 
-                // ✅ 1.1 Kod Kalitesi Skoru Hesapla
                 int codeQualityScore = Math.Max(0,
                     100 - (metric.ErrorCount * 5 + metric.WarningCount * 2));
 
                 metric.CodeQualityScore = codeQualityScore;
 
-                // 2️⃣ Scoped repo oluştur ve DB'ye kaydet
                 using var scope = _scopeFactory.CreateScope();
                 var repo = scope.ServiceProvider.GetRequiredService<IMetricsRepository>();
                 await repo.SaveAsync(metric, ct);
 
-                // 3️⃣ results listesini JSON'dan al
                 JsonElement? results = null;
                 try
                 {
@@ -131,7 +127,6 @@ public sealed class MetricsConsumer : BackgroundService
                     _logger.LogWarning(e, "Results parse edilemedi.");
                 }
 
-                // 4️⃣ Yeni event oluştur (Report.Api'ye gönderilecek)
                 var evt = new
                 {
                     type = "MetricsCalculatedEvent",
@@ -141,15 +136,13 @@ public sealed class MetricsConsumer : BackgroundService
                     warningCount = metric.WarningCount,
                     issueCount = metric.IssueCount,
                     fileCount = metric.FileCount,
-                    codeQualityScore, // ✅ eklendi
+                    codeQualityScore, 
                     calculatedAt = metric.CalculatedAt,
                     results
                 };
 
-                // 5️⃣ Yeni event'i yayınla
                 await PublishAsync(_opt.MetricsExchange, _opt.MetricsRoutingKey, evt);
 
-                // 6️⃣ Mesajı onayla
                 await _ch!.BasicAckAsync(ea.DeliveryTag, false);
 
                 _logger.LogInformation("📊 Metrics computed for {SubmissionId} | Score={Score}", metric.SubmissionId, codeQualityScore);
