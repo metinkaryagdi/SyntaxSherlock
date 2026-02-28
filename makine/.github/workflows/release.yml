@@ -1,0 +1,96 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # v1.0.0, v1.1.0 gibi taglar için tetiklenir
+  workflow_dispatch:  # Manuel tetikleme için
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r backend/requirements.txt
+        pip install pyinstaller
+    
+    - name: Install Node dependencies
+      run: |
+        cd frontend
+        npm install
+    
+    - name: Train model
+      run: |
+        cd backend
+        python train.py
+    
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+    
+    - name: Prepare standalone files
+      run: |
+        # Create standalone directory structure
+        mkdir -p standalone/static
+        
+        # Copy frontend build
+        cp -r frontend/dist/* standalone/static/
+        
+        # Copy scanner
+        cp backend/scanner.py standalone/
+        
+        # Copy model
+        cp backend/syntax_sherlock_model.pkl standalone/
+      shell: bash
+    
+    - name: Build executable
+      run: |
+        cd standalone
+        pyinstaller --name "SyntaxSherlock" --onefile --add-data "static;static" --add-data "scanner.py;." --add-data "syntax_sherlock_model.pkl;." --hidden-import "sklearn.ensemble._forest" --hidden-import "sklearn.tree._classes" --hidden-import "sklearn.neighbors._typedefs" --hidden-import "sklearn.utils._cython_blas" --hidden-import "sklearn.neighbors._quad_tree" --hidden-import "sklearn.tree._utils" --collect-submodules "sklearn" --noconfirm --clean app.py
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: standalone/dist/SyntaxSherlock.exe
+        body: |
+          ## 🔍 SyntaxSherlock ${{ github.ref_name }}
+          
+          ### 📥 Download
+          Download **SyntaxSherlock.exe** and run it - that's all you need!
+          
+          ### 🚀 Quick Start
+          1. Download `SyntaxSherlock.exe`
+          2. Double-click to run
+          3. Browser opens automatically at http://localhost:8000
+          4. Upload your Python files and analyze!
+          
+          ### ✨ Features
+          - 🎯 ML-based runtime error prediction
+          - 📊 Risk scoring (0-1 scale)
+          - 🔍 ZeroDivisionError & IndexError detection
+          - 📦 All-in-one executable (model embedded)
+          
+          ### 📋 What's New
+          Check the commit history for detailed changes.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

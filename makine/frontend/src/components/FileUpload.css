@@ -1,0 +1,149 @@
+.file-upload-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.file-upload-zone {
+    position: relative;
+    padding: 3rem 2rem;
+    text-align: center;
+    border: 2px dashed var(--border-color);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    cursor: pointer;
+}
+
+.file-upload-zone.dragging {
+    border-color: var(--primary-color);
+    background: rgba(91, 124, 230, 0.05);
+    border-style: solid;
+}
+
+.file-upload-zone.analyzing {
+    cursor: not-allowed;
+    opacity: 0.9;
+}
+
+.upload-icon {
+    margin: 0 auto 1.5rem;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color);
+    border-radius: var(--radius-md);
+    color: white;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.upload-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+}
+
+.upload-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.selected-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(91, 124, 230, 0.1);
+    border: 1px solid var(--primary-color);
+    border-radius: var(--radius-md);
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.selected-file svg {
+    flex-shrink: 0;
+}
+
+.btn {
+    position: relative;
+    z-index: 1;
+}
+
+.analyzing-dots {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.analyzing-dots span {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+.analyzing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.analyzing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.supported-formats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.supported-formats svg {
+    flex-shrink: 0;
+    color: var(--primary-color);
+}
+
+.supported-formats strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .file-upload-zone {
+        padding: 2rem 1.5rem;
+    }
+
+    .upload-title {
+        font-size: 1.25rem;
+    }
+
+    .upload-icon {
+        width: 56px;
+        height: 56px;
+    }
+
+    .upload-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+}

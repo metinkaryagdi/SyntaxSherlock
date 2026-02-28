@@ -1,0 +1,147 @@
+version: "3.9"
+
+services:
+  # 🐇 RabbitMQ (with management UI)
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Web UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ssnet
+
+  # 🐘 PostgreSQL
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ssuser
+      POSTGRES_PASSWORD: sspass
+      POSTGRES_DB: syntaxsherlock
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ssuser -d syntaxsherlock"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks:
+      - ssnet
+
+  # 🐍 LinterWorker (Python)
+  linter-worker:
+    build:
+      context: ../src/LinterWorker
+      dockerfile: Dockerfile
+    container_name: linter-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBITMQ_HOST: rabbitmq
+    volumes:
+      - ../storage:/app/storage
+    restart: unless-stopped
+    networks:
+      - ssnet
+
+  # ⚙️ MetricsWorker (.NET 9)
+  metrics-worker:
+    build:
+      context: ../src/MetricsWorker
+      dockerfile: Dockerfile
+    container_name: metrics-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__Postgres: Host=postgres;Port=5432;Database=syntaxsherlock_metrics;Username=ssuser;Password=sspass
+    restart: unless-stopped
+    networks:
+      - ssnet
+
+  # 📊 Report API (.NET 9)
+  report-api:
+    build:
+      context: ../src/Report.Api
+      dockerfile: Dockerfile
+    container_name: report-api
+    ports:
+      - "5035:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=syntaxsherlock_report;Username=ssuser;Password=sspass
+    restart: unless-stopped
+    networks:
+      - ssnet
+
+  # 📨 Submission API (.NET 9)
+  submission-api:
+    build:
+      context: ../src
+      dockerfile: Submission/Submission.Api/Dockerfile
+    container_name: submission-api
+    ports:
+      - "5033:8080"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      RabbitMq__HostName: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__UserName: guest
+      RabbitMq__Password: guest
+      RabbitMq__Exchange: code.events
+      RabbitMq__SubmittedRoutingKey: code.submitted
+      Storage__Root: storage
+    volumes:
+      - ../storage:/app/storage
+    restart: unless-stopped
+    networks:
+      - ssnet
+  # 🌐 Gateway API (.NET 9)
+  gateway-api:
+    build:
+      context: ../src/Gateway/Gateway.Api
+      dockerfile: Dockerfile
+    container_name: gateway-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - submission-api
+      - report-api
+    networks:
+      - ssnet
+
+
+
+# 📦 Kalıcı veriler
+volumes:
+  pgdata:
+
+# 🌐 Ortak network
+networks:
+  ssnet:
+    driver: bridge
